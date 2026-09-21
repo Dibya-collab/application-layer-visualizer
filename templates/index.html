@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Layer Activity & Protocol Visualizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1>Application Layer Visualizer</h1>
+    <p>Browsing • Mail • Streaming — simulated protocol flows</p>
+  </div>
+  <span class="badge">AI-assisted project</span>
+</header>
+
+<main class="dashboard">
+  <!-- PANEL 1 -->
+  <section class="panel activity-panel">
+    <div class="panel-title">
+      <div>
+        <h2>Activity Panel</h2>
+        <p>Perform an application-layer activity.</p>
+      </div>
+      <span id="status" class="status idle">Ready</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-mode="browsing">Browsing</button>
+      <button class="tab" data-mode="mail">Mail</button>
+      <button class="tab" data-mode="streaming">Streaming</button>
+    </div>
+
+    <div id="browsing" class="mode active">
+      <label>URL</label>
+      <div class="row">
+        <input id="urlInput" value="https://example.com/index.html" />
+        <button id="visitBtn" class="primary">Visit</button>
+      </div>
+      <p class="hint">A simulated DNS lookup is followed by an HTTP GET/response.</p>
+    </div>
+
+    <div id="mail" class="mode">
+      <label>To</label>
+      <input id="toInput" placeholder="student@example.com" value="student@example.com">
+      <label>Subject</label>
+      <input id="subjectInput" placeholder="Subject" value="Computer Networks Assignment">
+      <label>Body</label>
+      <textarea id="bodyInput" rows="4">Hello, this is a simulated SMTP message.</textarea>
+      <button id="sendBtn" class="primary">Send Mail</button>
+    </div>
+
+    <div id="streaming" class="mode">
+      <label>Video quality</label>
+      <select id="quality">
+        <option>360p</option>
+        <option selected>720p</option>
+        <option>1080p</option>
+      </select>
+      <div class="stream-controls">
+        <button id="playBtn" class="primary">▶ Play</button>
+        <button id="pauseBtn">Ⅱ Pause</button>
+      </div>
+      <div class="video-box">
+        <div class="play-icon">▶</div>
+        <div>
+          <strong>Simulated Video</strong>
+          <span id="streamState">Paused</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-log">
+      <div class="section-heading">
+        <h3>Activity Log</h3>
+        <button id="clearLog">Clear</button>
+      </div>
+      <ul id="activityLog"></ul>
+    </div>
+  </section>
+
+  <!-- PANEL 2 -->
+  <section class="panel protocol-panel">
+    <div class="panel-title">
+      <div>
+        <h2>Protocol Visualization</h2>
+        <p id="flowDescription">Choose an activity to begin.</p>
+      </div>
+      <span id="stepCounter">0 / 0</span>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn">← Previous</button>
+      <button id="pauseViz">Ⅱ Pause</button>
+      <button id="nextBtn">Next →</button>
+      <button id="replayBtn">↻ Replay</button>
+    </div>
+
+    <div class="timeline">
+      <div id="timelineFill"></div>
+    </div>
+
+    <div id="protocolFlow" class="protocol-flow">
+      <div class="empty-state">
+        <div>🌐</div>
+        <h3>No protocol flow yet</h3>
+        <p>Perform Browsing, Mail, or Streaming on the left.</p>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="client"></i> Client → Server</span>
+      <span><i class="server"></i> Server → Client</span>
+      <span><i class="field"></i> Key field</span>
+    </div>
+  </section>
+</main>
+
+<footer>Educational simulation — no real DNS, SMTP, or video traffic is generated.</footer>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
