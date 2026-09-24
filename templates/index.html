@@ -19,7 +19,7 @@
   <!-- PANEL 1 -->
   <section class="panel activity-panel">
     <div class="panel-title">
-      <div><h2>Activity Panel</h2><p id="panelHint">Choose Browsing, Mail, or Streaming. The communication then runs automatically.</p></div>
+      <div><h2>Activity Panel</h2><p id="panelHint">Choose an activity — the communication starts automatically.</p></div>
       <span id="status" class="status idle">Ready</span>
     </div>
 
@@ -37,40 +37,40 @@
 
       <div id="browsing" class="mode active">
         <label>URL</label>
-        <div class="row"><input id="urlInput" value="https://example.com/index.html"><button id="visitBtn" class="primary">Visit</button></div>
-        <p class="hint">Select Browsing; DNS and HTTP communication runs automatically. No external page is opened.</p>
+        <div class="row"><input id="urlInput" value="https://example.com/index.html"><button id="visitBtn" class="primary" type="button">Visit</button></div>
+        <p class="hint">Simulated DNS lookup followed by an HTTP GET/response. No external page is opened.</p>
       </div>
 
       <div id="mail" class="mode">
         <label>To</label><input id="toInput" value="student@example.com">
         <label>Subject</label><input id="subjectInput" value="Computer Networks Assignment">
         <label>Body</label><textarea id="bodyInput" rows="4">Hello, this is a simulated SMTP message.</textarea>
-        <button id="sendBtn" class="primary">Send Mail</button>
+        <button id="sendBtn" class="primary" type="button">Send Email</button>
       </div>
 
       <div id="streaming" class="mode">
         <label>Video quality</label><select id="quality"><option>360p</option><option selected>720p</option><option>1080p</option></select>
-        <div class="stream-controls"><button id="playBtn" class="primary">▶ Play</button><button id="pauseBtn">Ⅱ Pause</button></div>
+        <div class="stream-controls"><button id="playBtn" class="primary" type="button">▶ Play</button><button id="pauseBtn" type="button">Ⅱ Pause</button></div>
         <div class="video-box"><div class="play-icon">▶</div><div><strong>Simulated Video</strong><span id="streamState">Paused</span></div></div>
       </div>
     </div>
 
     <div id="transportControls" class="transport-controls hidden">
-      <div class="transport-note"><strong>Automatic Transport Layer</strong><span>Browsing = TCP • Mailing = TCP • Streaming = UDP. Select an activity; its transport communication starts automatically.</span></div>
+      <div class="transport-note"><strong>Automatic Transport Layer</strong><span>Browsing = TCP • Mailing = TCP • Streaming = UDP. Perform the activity once; the visualization starts automatically.</span></div>
       <div class="tabs transport-activity-tabs">
         <button class="transport-tab active" data-tmode="browsing">Browsing</button>
         <button class="transport-tab" data-tmode="mail">Mail</button>
         <button class="transport-tab" data-tmode="streaming">Streaming</button>
       </div>
       <div id="tbrowsing" class="tmode active">
-        <label>URL</label><div class="row"><input id="transportUrlInput" value="https://www.google.com"><button id="transportVisitBtn" class="primary">Visit</button></div>
-        <p class="hint">Select Browsing; the TCP transport communication runs automatically here.</p>
+        <label>URL</label><div class="row"><input id="transportUrlInput" value="https://www.google.com"><button id="transportVisitBtn" class="primary" type="button">Visit</button></div>
+        <p class="hint">The page opens in a new tab while the TCP transport visualization runs here.</p>
       </div>
       <div id="tmail" class="tmode">
         <label>To</label><input id="transportToInput" value="student@example.com">
         <label>Subject</label><input id="transportSubjectInput" value="Computer Networks Assignment">
         <label>Body</label><textarea id="transportBodyInput" rows="3">Hello, this is a transport-layer mail demonstration.</textarea>
-        <button id="transportSendBtn" class="primary">Send Mail</button>
+        <button id="transportSendBtn" class="primary" type="button">Send Email</button>
       </div>
       <div id="tstreaming" class="tmode">
         <label>Video quality</label><select id="transportQuality"><option>360p</option><option selected>720p</option><option>1080p</option></select>
@@ -97,7 +97,7 @@
         <div><label>Simulation speed</label><select id="simulationSpeed"><option value="1200">Slow</option><option value="700" selected>Normal</option><option value="350">Fast</option></select></div>
         <div class="check-stack"><label><input id="lossToggle" type="checkbox"> Simulate packet loss</label><label><input id="errorToggle" type="checkbox"> Simulate checksum error</label></div>
       </div>
-      <div class="transport-actions"><button id="startTransport" class="primary">▶ Start Simulation</button><button id="pauseTransport">Ⅱ Pause</button><button id="resetTransport">↻ Reset</button></div>
+      <div class="transport-actions"><button id="pauseTransport">Ⅱ Pause</button><button id="resetTransport">↻ Reset</button></div>
       <div class="function-chips">
         <span>Port addressing</span><span>Segmentation</span><span>Multiplexing</span><span>Demultiplexing</span><span>Checksum</span><span>Flow control</span><span>Congestion</span>
       </div>
@@ -112,12 +112,12 @@
   <!-- PANEL 2 -->
   <section class="panel protocol-panel">
     <div class="panel-title">
-      <div><h2 id="visualTitle">Protocol Visualization</h2><p id="flowDescription">Choose an activity. The communication will run automatically.</p></div>
+      <div><h2 id="visualTitle">Protocol Visualization</h2><p id="flowDescription">Choose an activity to begin.</p></div>
       <span id="stepCounter">0 / 0</span>
     </div>
 
     <div class="controls">
-      <button id="prevBtn">← Previous</button><button id="pauseViz">Ⅱ Pause</button><button id="nextBtn">Next →</button><button id="replayBtn">↻ Replay</button>
+      <button id="prevBtn" type="button">← Previous</button><button id="pauseViz" type="button">Ⅱ Pause</button><button id="nextBtn" type="button">Next →</button><button id="stopViz" type="button">■ Stop</button><button id="replayBtn" type="button">▶ Play</button>
     </div>
     <div class="timeline"><div id="timelineFill"></div></div>
 
