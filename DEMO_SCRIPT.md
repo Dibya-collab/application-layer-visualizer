@@ -1,19 +1,10 @@
-# 2–4 Minute Demo Script
+# Demo Script — Application + Transport Layer Visualizer
 
-**0:00–0:20 — Introduction**
-“ This is my Computer Networks Application Layer Dual-Panel Activity and Protocol Visualizer. The left panel performs the user activity, while the right panel visualizes the corresponding application-layer protocol.”
-
-**0:20–1:00 — Browsing**
-Select Browsing and click Visit. Explain that the right panel first shows a DNS query and response, followed by HTTP GET and HTTP 200 OK. Use Next and Previous to demonstrate step control.
-
-**1:00–1:45 — Mail**
-Select Mail, enter/keep the sample recipient and subject, and click Send Mail. Explain EHLO, MAIL FROM, RCPT TO, DATA, message acceptance, and QUIT. Pause and resume the visualization.
-
-**1:45–2:30 — Streaming**
-Select Streaming and click Play. Explain DNS, the HTTP manifest request, and repeated HTTP segment requests. Change quality and replay the flow.
-
-**2:30–3:00 — Architecture**
-Briefly show the source files. Explain that Flask serves the page and JavaScript handles the simulated protocol state and synchronization.
-
-**3:00–3:30 — Reflection**
-Mention that the traffic is simulated, the protocol order was checked, and AI assistance was used for architecture, coding, debugging/iteration, and documentation.
+1. Show Application Layer. Demonstrate Browsing, Mail and Streaming and explain the simulated protocol flow.
+2. Select Transport Layer.
+3. Enter `Hello Transport Layer!`, keep TCP, segment size 5, and start the simulation.
+4. Explain SYN, SYN-ACK, ACK, port addressing, segmentation, sequence numbers and acknowledgements.
+5. Enable packet loss and replay. Point out the dropped segment, duplicate ACK and simplified retransmission.
+6. Enable checksum error and replay to show the error state.
+7. Switch to UDP and start again. Explain that UDP sends datagrams without TCP's three-way handshake and TCP-style ACK/retransmission.
+8. Point out multiplexing, demultiplexing, flow control and the simplified congestion-control graph.

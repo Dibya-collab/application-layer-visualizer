@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Application Layer Activity & Protocol Visualizer</title>
+  <title>Application & Transport Layer Visualizer</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <header class="topbar">
   <div>
-    <h1>Application Layer Visualizer</h1>
-    <p>Browsing • Mail • Streaming — simulated protocol flows</p>
+    <h1 id="pageTitle">Application Layer Visualizer</h1>
+    <p id="pageSubtitle">Browsing • Mail • Streaming — simulated protocol flows</p>
   </div>
   <span class="badge">AI-assisted project</span>
 </header>
@@ -19,63 +19,93 @@
   <!-- PANEL 1 -->
   <section class="panel activity-panel">
     <div class="panel-title">
-      <div>
-        <h2>Activity Panel</h2>
-        <p>Perform an application-layer activity.</p>
-      </div>
+      <div><h2>Activity Panel</h2><p id="panelHint">Choose a layer and perform an activity.</p></div>
       <span id="status" class="status idle">Ready</span>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" data-mode="browsing">Browsing</button>
-      <button class="tab" data-mode="mail">Mail</button>
-      <button class="tab" data-mode="streaming">Streaming</button>
+    <div class="layer-tabs">
+      <button class="layer-tab active" data-layer="application">Application Layer</button>
+      <button class="layer-tab" data-layer="transport">Transport Layer</button>
     </div>
 
-    <div id="browsing" class="mode active">
-      <label>URL</label>
-      <div class="row">
-        <input id="urlInput" value="https://example.com/index.html" />
-        <button id="visitBtn" class="primary">Visit</button>
+    <div id="applicationControls">
+      <div class="tabs">
+        <button class="tab active" data-mode="browsing">Browsing</button>
+        <button class="tab" data-mode="mail">Mail</button>
+        <button class="tab" data-mode="streaming">Streaming</button>
       </div>
-      <p class="hint">A simulated DNS lookup is followed by an HTTP GET/response.</p>
-    </div>
 
-    <div id="mail" class="mode">
-      <label>To</label>
-      <input id="toInput" placeholder="student@example.com" value="student@example.com">
-      <label>Subject</label>
-      <input id="subjectInput" placeholder="Subject" value="Computer Networks Assignment">
-      <label>Body</label>
-      <textarea id="bodyInput" rows="4">Hello, this is a simulated SMTP message.</textarea>
-      <button id="sendBtn" class="primary">Send Mail</button>
-    </div>
-
-    <div id="streaming" class="mode">
-      <label>Video quality</label>
-      <select id="quality">
-        <option>360p</option>
-        <option selected>720p</option>
-        <option>1080p</option>
-      </select>
-      <div class="stream-controls">
-        <button id="playBtn" class="primary">▶ Play</button>
-        <button id="pauseBtn">Ⅱ Pause</button>
+      <div id="browsing" class="mode active">
+        <label>URL</label>
+        <div class="row"><input id="urlInput" value="https://example.com/index.html"><button id="visitBtn" class="primary">Visit</button></div>
+        <p class="hint">Simulated DNS lookup followed by an HTTP GET/response. No external page is opened.</p>
       </div>
-      <div class="video-box">
-        <div class="play-icon">▶</div>
-        <div>
-          <strong>Simulated Video</strong>
-          <span id="streamState">Paused</span>
-        </div>
+
+      <div id="mail" class="mode">
+        <label>To</label><input id="toInput" value="student@example.com">
+        <label>Subject</label><input id="subjectInput" value="Computer Networks Assignment">
+        <label>Body</label><textarea id="bodyInput" rows="4">Hello, this is a simulated SMTP message.</textarea>
+        <button id="sendBtn" class="primary">Send Mail</button>
+      </div>
+
+      <div id="streaming" class="mode">
+        <label>Video quality</label><select id="quality"><option>360p</option><option selected>720p</option><option>1080p</option></select>
+        <div class="stream-controls"><button id="playBtn" class="primary">▶ Play</button><button id="pauseBtn">Ⅱ Pause</button></div>
+        <div class="video-box"><div class="play-icon">▶</div><div><strong>Simulated Video</strong><span id="streamState">Paused</span></div></div>
+      </div>
+    </div>
+
+    <div id="transportControls" class="transport-controls hidden">
+      <div class="transport-note"><strong>Automatic Transport Layer</strong><span>Browsing = TCP • Mailing = TCP • Streaming = UDP. Perform the activity once; the visualization starts automatically.</span></div>
+      <div class="tabs transport-activity-tabs">
+        <button class="transport-tab active" data-tmode="browsing">Browsing</button>
+        <button class="transport-tab" data-tmode="mail">Mail</button>
+        <button class="transport-tab" data-tmode="streaming">Streaming</button>
+      </div>
+      <div id="tbrowsing" class="tmode active">
+        <label>URL</label><div class="row"><input id="transportUrlInput" value="https://www.google.com"><button id="transportVisitBtn" class="primary">Visit</button></div>
+        <p class="hint">The page opens in a new tab while the TCP transport visualization runs here.</p>
+      </div>
+      <div id="tmail" class="tmode">
+        <label>To</label><input id="transportToInput" value="student@example.com">
+        <label>Subject</label><input id="transportSubjectInput" value="Computer Networks Assignment">
+        <label>Body</label><textarea id="transportBodyInput" rows="3">Hello, this is a transport-layer mail demonstration.</textarea>
+        <button id="transportSendBtn" class="primary">Send Mail</button>
+      </div>
+      <div id="tstreaming" class="tmode">
+      <div id="tstreaming" class="tmode">
+        <label>Video quality</label><select id="transportQuality"><option>360p</option><option selected>720p</option><option>1080p</option></select>
+        <div class="stream-controls"><button id="transportPlayBtn" class="primary">▶ Play</button></div>
+        <div class="video-box"><div class="play-icon">▶</div><div><strong>Streaming</strong><span id="transportStreamState">Paused</span></div></div>
+        <p class="hint">Choose Recorded or Live in the Transport Protocol Visualization panel on the right.</p>
+      </div>
+      <div class="auto-protocol"><span>Detected for this activity</span><strong id="activityTransportProtocol">TCP</strong></div>
+      <label>Data carried by transport</label><textarea id="transportData" rows="3">Hello Transport Layer!</textarea>
+      <div class="two-col">
+        <div><label>Source IP</label><input id="sourceIp" value="192.168.1.10"></div>
+        <div><label>Destination IP</label><input id="destIp" value="192.168.1.20"></div>
+      </div>
+      <div class="two-col">
+        <div><label>Source Port</label><input id="sourcePort" type="number" min="1" max="65535" value="5000"></div>
+        <div><label>Destination Port</label><input id="destPort" type="number" min="1" max="65535" value="8080"></div>
+      </div>
+      <div class="two-col">
+        <div><label>Protocol</label><input id="transportProtocolDisplay" value="TCP" readonly></div>
+        <input id="transportProtocol" type="hidden" value="TCP">
+        <div><label>Segment size</label><input id="segmentSize" type="number" min="1" max="20" value="5"></div>
+      </div>
+      <div class="two-col">
+        <div><label>Simulation speed</label><select id="simulationSpeed"><option value="1200">Slow</option><option value="700" selected>Normal</option><option value="350">Fast</option></select></div>
+        <div class="check-stack"><label><input id="lossToggle" type="checkbox"> Simulate packet loss</label><label><input id="errorToggle" type="checkbox"> Simulate checksum error</label></div>
+      </div>
+      <div class="transport-actions"><button id="startTransport" class="primary">▶ Start Simulation</button><button id="pauseTransport">Ⅱ Pause</button><button id="resetTransport">↻ Reset</button></div>
+      <div class="function-chips">
+        <span>Port addressing</span><span>Segmentation</span><span>Multiplexing</span><span>Demultiplexing</span><span>Checksum</span><span>Flow control</span><span>Congestion</span>
       </div>
     </div>
 
     <div class="activity-log">
-      <div class="section-heading">
-        <h3>Activity Log</h3>
-        <button id="clearLog">Clear</button>
-      </div>
+      <div class="section-heading"><h3>Activity Log</h3><button id="clearLog">Clear</button></div>
       <ul id="activityLog"></ul>
     </div>
   </section>
@@ -83,41 +113,59 @@
   <!-- PANEL 2 -->
   <section class="panel protocol-panel">
     <div class="panel-title">
-      <div>
-        <h2>Protocol Visualization</h2>
-        <p id="flowDescription">Choose an activity to begin.</p>
-      </div>
+      <div><h2 id="visualTitle">Protocol Visualization</h2><p id="flowDescription">Choose an activity to begin.</p></div>
       <span id="stepCounter">0 / 0</span>
     </div>
 
     <div class="controls">
-      <button id="prevBtn">← Previous</button>
-      <button id="pauseViz">Ⅱ Pause</button>
-      <button id="nextBtn">Next →</button>
-      <button id="replayBtn">↻ Replay</button>
+      <button id="prevBtn">← Previous</button><button id="pauseViz">Ⅱ Pause</button><button id="nextBtn">Next →</button><button id="replayBtn">↻ Replay</button>
     </div>
+    <div class="timeline"><div id="timelineFill"></div></div>
 
-    <div class="timeline">
-      <div id="timelineFill"></div>
-    </div>
-
-    <div id="protocolFlow" class="protocol-flow">
-      <div class="empty-state">
-        <div>🌐</div>
-        <h3>No protocol flow yet</h3>
-        <p>Perform Browsing, Mail, or Streaming on the left.</p>
+    <div id="applicationVisualization">
+      <div id="protocolFlow" class="protocol-flow">
+        <div class="empty-state"><div>🌐</div><h3>No protocol flow yet</h3><p>Perform Browsing, Mail, or Streaming on the left.</p></div>
       </div>
     </div>
 
-    <div class="legend">
-      <span><i class="client"></i> Client → Server</span>
-      <span><i class="server"></i> Server → Client</span>
-      <span><i class="field"></i> Key field</span>
+    <div id="transportVisualization" class="hidden">
+      <div class="stream-choice-panel">
+        <div class="stream-choice-title"><strong>Streaming mode</strong><span>Choose the transport behavior to visualize.</span></div>
+        <div class="stream-type-options" role="radiogroup" aria-label="Streaming mode">
+          <label class="stream-type-option"><input type="radio" name="transportStreamType" value="recorded" checked> <span><strong>Recorded</strong><small>TCP • HTTP-based media</small></span></label>
+          <label class="stream-type-option"><input type="radio" name="transportStreamType" value="live"> <span><strong>Live</strong><small>UDP • real-time media</small></span></label>
+        </div>
+      </div>
+      <div class="transport-summary">
+        <div class="summary-card"><span>Protocol</span><strong id="detectedProtocol">—</strong></div>
+        <div class="summary-card"><span>Connection</span><strong id="connectionState">Idle</strong></div>
+        <div class="summary-card"><span>Segments</span><strong id="segmentCount">0</strong></div>
+        <div class="summary-card"><span>Checksum</span><strong id="checksumState">—</strong></div>
+      </div>
+      <div class="flow-diagram" id="flowDiagram">
+        <div class="endpoint"><b>Application</b><small id="srcApp">Client : 5000</small></div>
+        <div class="pipe"><span>Transport</span><div class="pipe-line"><i id="packetDot"></i></div></div>
+        <div class="endpoint"><b>Application</b><small id="dstApp">Server : 8080</small></div>
+      </div>
+      <div id="transportTimeline" class="transport-timeline"></div>
+      <div class="detail-grid">
+        <div class="detail-card"><h3>Packet / Segment Details</h3><pre id="packetDetails">Start a simulation to inspect a transport header.</pre></div>
+        <div class="detail-card"><h3>What the protocol is doing</h3><p id="explanation">TCP and UDP functions will be explained here as the simulation progresses.</p></div>
+      </div>
+      <div class="function-grid">
+        <div class="info-card"><h3>Multiplexing</h3><p>Several application processes can use different source/destination ports through the same transport layer.</p><div class="mini-mux"><span>Browser : 5000</span><span>Mail : 5001</span><span>Video : 5002</span><b>↓ Transport</b></div></div>
+        <div class="info-card"><h3>Demultiplexing</h3><p>At the destination, port numbers help deliver incoming data to the correct application process.</p><div class="mini-mux"><b>Transport ↓</b><span>→ Port 8080 → Web app</span><span>→ Port 25 → Mail app</span><span>→ Port 5002 → Video app</span></div></div>
+        <div class="info-card"><h3>Flow Control</h3><p>TCP can limit the amount of outstanding data using the receiver's advertised window.</p><div class="window-bar"><i id="windowFill"></i></div><small id="windowText">Receiver window: —</small></div>
+        <div class="info-card"><h3>Congestion Control</h3><p>Simplified educational view: congestion causes the sending window to reduce; successful delivery lets it grow.</p><canvas id="congestionChart" height="120"></canvas></div>
+      </div>
+      <div class="transport-disclaimer">Educational simulation. TCP retransmission, checksum, flow control and congestion control are simplified to make the transport-layer functions visible; they are not a full implementation of the operating system's TCP stack.</div>
     </div>
+
+    <div class="legend"><span><i class="client"></i> Client → Server</span><span><i class="server"></i> Server → Client</span><span><i class="field"></i> Header / key field</span></div>
   </section>
 </main>
 
-<footer>Educational simulation — no real DNS, SMTP, or video traffic is generated.</footer>
+<footer>Application and Transport Layer educational simulation — no external web page is opened by the Browsing demo.</footer>
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
