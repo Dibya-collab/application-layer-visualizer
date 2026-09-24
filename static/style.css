@@ -14,3 +14,5 @@
 .stream-type-option span{display:flex;flex-direction:column;gap:2px}
 .stream-type-option small{color:#8fa0b8;font-size:11px}
 @media (max-width:520px){.stream-type-options{grid-template-columns:1fr}}
+
+.stream-type-hint{color:#8fa0b8;font-size:11px;margin:0 0 8px}

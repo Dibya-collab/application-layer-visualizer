@@ -19,7 +19,7 @@
   <!-- PANEL 1 -->
   <section class="panel activity-panel">
     <div class="panel-title">
-      <div><h2>Activity Panel</h2><p id="panelHint">Choose a layer and perform an activity.</p></div>
+      <div><h2>Activity Panel</h2><p id="panelHint">Choose Browsing, Mail, or Streaming. The communication then runs automatically.</p></div>
       <span id="status" class="status idle">Ready</span>
     </div>
 
@@ -38,7 +38,7 @@
       <div id="browsing" class="mode active">
         <label>URL</label>
         <div class="row"><input id="urlInput" value="https://example.com/index.html"><button id="visitBtn" class="primary">Visit</button></div>
-        <p class="hint">Simulated DNS lookup followed by an HTTP GET/response. No external page is opened.</p>
+        <p class="hint">Select Browsing; DNS and HTTP communication runs automatically. No external page is opened.</p>
       </div>
 
       <div id="mail" class="mode">
@@ -56,7 +56,7 @@
     </div>
 
     <div id="transportControls" class="transport-controls hidden">
-      <div class="transport-note"><strong>Automatic Transport Layer</strong><span>Browsing = TCP • Mailing = TCP • Streaming = UDP. Perform the activity once; the visualization starts automatically.</span></div>
+      <div class="transport-note"><strong>Automatic Transport Layer</strong><span>Browsing = TCP • Mailing = TCP • Streaming = UDP. Select an activity; its transport communication starts automatically.</span></div>
       <div class="tabs transport-activity-tabs">
         <button class="transport-tab active" data-tmode="browsing">Browsing</button>
         <button class="transport-tab" data-tmode="mail">Mail</button>
@@ -64,7 +64,7 @@
       </div>
       <div id="tbrowsing" class="tmode active">
         <label>URL</label><div class="row"><input id="transportUrlInput" value="https://www.google.com"><button id="transportVisitBtn" class="primary">Visit</button></div>
-        <p class="hint">The page opens in a new tab while the TCP transport visualization runs here.</p>
+        <p class="hint">Select Browsing; the TCP transport communication runs automatically here.</p>
       </div>
       <div id="tmail" class="tmode">
         <label>To</label><input id="transportToInput" value="student@example.com">
@@ -72,7 +72,6 @@
         <label>Body</label><textarea id="transportBodyInput" rows="3">Hello, this is a transport-layer mail demonstration.</textarea>
         <button id="transportSendBtn" class="primary">Send Mail</button>
       </div>
-      <div id="tstreaming" class="tmode">
       <div id="tstreaming" class="tmode">
         <label>Video quality</label><select id="transportQuality"><option>360p</option><option selected>720p</option><option>1080p</option></select>
         <div class="stream-controls"><button id="transportPlayBtn" class="primary">▶ Play</button></div>
@@ -113,7 +112,7 @@
   <!-- PANEL 2 -->
   <section class="panel protocol-panel">
     <div class="panel-title">
-      <div><h2 id="visualTitle">Protocol Visualization</h2><p id="flowDescription">Choose an activity to begin.</p></div>
+      <div><h2 id="visualTitle">Protocol Visualization</h2><p id="flowDescription">Choose an activity. The communication will run automatically.</p></div>
       <span id="stepCounter">0 / 0</span>
     </div>
 
@@ -124,13 +123,14 @@
 
     <div id="applicationVisualization">
       <div id="protocolFlow" class="protocol-flow">
-        <div class="empty-state"><div>🌐</div><h3>No protocol flow yet</h3><p>Perform Browsing, Mail, or Streaming on the left.</p></div>
+        <div class="empty-state"><div>🌐</div><h3>No protocol flow yet</h3><p>Click Browsing, Mail, or Streaming — each activity now starts its own animated protocol simulation automatically.</p></div>
       </div>
     </div>
 
     <div id="transportVisualization" class="hidden">
       <div class="stream-choice-panel">
         <div class="stream-choice-title"><strong>Streaming mode</strong><span>Choose the transport behavior to visualize.</span></div>
+        <div id="streamTypeHint" class="stream-type-hint" aria-live="polite">Recorded streaming is shown as HTTP media over TCP.</div>
         <div class="stream-type-options" role="radiogroup" aria-label="Streaming mode">
           <label class="stream-type-option"><input type="radio" name="transportStreamType" value="recorded" checked> <span><strong>Recorded</strong><small>TCP • HTTP-based media</small></span></label>
           <label class="stream-type-option"><input type="radio" name="transportStreamType" value="live"> <span><strong>Live</strong><small>UDP • real-time media</small></span></label>

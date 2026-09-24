@@ -32,3 +32,11 @@ The transport layer is an educational simulation. It does not claim to implement
 5. Open `http://127.0.0.1:5000`.
 
 No external website is opened when using the Browsing demo; application-layer traffic is simulated.
+
+
+### Simulation behavior
+Clicking any of the three Application Layer tabs (Browsing, Mail, Streaming) immediately starts its corresponding animated protocol flow. The same behavior is available in the Transport Layer activity tabs.
+
+## Automatic communication session
+
+The Application Layer now starts an automatic communication session when the page loads. It runs Browsing, then Mail, then Streaming without requiring manual activity selection. The existing Previous, Pause, Next, and Replay controls remain available for manual inspection.

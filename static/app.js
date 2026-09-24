@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-let layer = "application", mode = "browsing", messages = [], current = -1, paused = true, timer = null;
+let layer = "application", mode = "browsing", messages = [], current = -1, paused = true, timer = null, automaticSession = false, automaticSessionTimer = null;
 document.querySelectorAll('input[name="transportStreamType"]').forEach(r=>r.addEventListener("change",()=>{
   if(transportActivity==="streaming") {
     updateStreamingChoiceUI();
@@ -63,13 +63,43 @@ function renderApplication(){
   });
 }
 function startApplicationFlow(newMode){
+  clearTimeout(automaticSessionTimer);
   mode=newMode; messages=applicationFlows[mode]; current=-1; paused=false; renderApplication(); setStatus("Running","running");
   $("flowDescription").textContent = mode==="browsing" ? "DNS → HTTP request/response" : mode==="mail" ? "SMTP conversation" : "DNS → HTTP manifest → video segments";
   clearInterval(timer); timer=setInterval(()=>{if(!paused) nextApplication();},800);
 }
-function nextApplication(){ if(current<messages.length-1){current++;renderApplication();}else{clearInterval(timer);paused=true;setStatus("Complete","done");$("pauseViz").textContent="▶ Resume";} }
+function nextApplication(){
+  if(current<messages.length-1){
+    current++;
+    renderApplication();
+  } else {
+    clearInterval(timer);
+    paused=true;
+    setStatus("Complete","done");
+    $("pauseViz").textContent="▶ Resume";
+    if(automaticSession){
+      const order=["browsing","mail","streaming"];
+      const next=order.indexOf(mode)+1;
+      if(next<order.length){
+        automaticSessionTimer=setTimeout(()=>startApplicationFlow(order[next]),1000);
+      } else {
+        automaticSession=false;
+        $("flowDescription").textContent="Automatic communication session complete — Browsing → Mail → Streaming.";
+      }
+    }
+  }
+}
 function prevApplication(){if(current>0){current--;renderApplication();setStatus("Running","running");}}
-function replayApplication(){current=-1;paused=false;setStatus("Running","running");renderApplication();clearInterval(timer);timer=setInterval(()=>{if(!paused)nextApplication()},800);}
+function replayApplication(){automaticSession=false;clearTimeout(automaticSessionTimer);current=-1;paused=false;setStatus("Running","running");renderApplication();clearInterval(timer);timer=setInterval(()=>{if(!paused)nextApplication()},800);}
+
+function runAutomaticCommunicationSession(){
+  automaticSession=true;
+  clearTimeout(automaticSessionTimer);
+  const first="browsing";
+  $("flowDescription").textContent="Automatic communication session starting: Browsing → Mail → Streaming.";
+  log("Automatic session: Browsing → Mail → Streaming");
+  startApplicationFlow(first);
+}
 
 function setLayer(newLayer){
   layer=newLayer;
@@ -84,8 +114,15 @@ function setLayer(newLayer){
   if(app){$("flowDescription").textContent="Choose an activity to begin.";setStatus("Ready");}
   else {
     setStatus("Ready");
-    setTransportActivity("browsing");
+    setTransportActivity(transportActivity || "browsing");
     resetTransport();
+    // Transport communication is automatic after the user chooses the activity.
+    setTimeout(()=>{
+      if(transportActivity==="browsing"){ $("transportData").value=`GET ${$("transportUrlInput").value.trim()||"https://example.com/index.html"}\nHTTP request`; }
+      else if(transportActivity==="mail"){ $("transportData").value=`To: ${$("transportToInput").value}\nSubject: ${$("transportSubjectInput").value}\n${$("transportBodyInput").value}`; }
+      else { $("transportStreamState").textContent=`Playing ${$("transportQuality").value}`; updateStreamingChoiceUI(); }
+      startTransport();
+    },150);
   }
 }
 
@@ -167,7 +204,20 @@ function drawCongestion(cfg){
 
 // Layer and activity controls
 document.querySelectorAll(".layer-tab").forEach(btn=>btn.addEventListener("click",()=>setLayer(btn.dataset.layer)));
-document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));btn.classList.add("active");document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));$(btn.dataset.mode).classList.add("active");mode=btn.dataset.mode;}));
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
+  $(btn.dataset.mode).classList.add("active");
+  mode=btn.dataset.mode;
+  automaticSession=false;
+  clearTimeout(automaticSessionTimer);
+  // Every Application Layer activity starts its own visual simulation immediately.
+  automaticSession=false;
+  if(mode==="browsing") { log(`Browsing: simulation started for ${$("urlInput").value}`); startApplicationFlow("browsing"); }
+  else if(mode==="mail") { log(`Mail: SMTP simulation started for ${$("toInput").value}`); startApplicationFlow("mail"); }
+  else if(mode==="streaming") { $("streamState").textContent=`Playing at ${$("quality").value}`; log(`Streaming: simulation started at ${$("quality").value}`); startApplicationFlow("streaming"); }
+}));
 $("visitBtn").onclick=()=>{log(`Browsing: simulated visit to ${$("urlInput").value}`);startApplicationFlow("browsing");};
 $("sendBtn").onclick=()=>{log(`Mail: simulated send to ${$("toInput").value} — ${$("subjectInput").value}`);startApplicationFlow("mail");};
 $("playBtn").onclick=()=>{$("streamState").textContent=`Playing at ${$("quality").value}`;log(`Streaming: Play at ${$("quality").value}`);startApplicationFlow("streaming");};
@@ -203,14 +253,18 @@ function setTransportActivity(tmode){
   $("stepCounter").textContent="0 / 0";
 }
 
-document.querySelectorAll(".transport-tab").forEach(btn=>btn.addEventListener("click",()=>setTransportActivity(btn.dataset.tmode)));
+document.querySelectorAll(".transport-tab").forEach(btn=>btn.addEventListener("click",()=>{
+  setTransportActivity(btn.dataset.tmode);
+  if(btn.dataset.tmode==="browsing"){ $("transportData").value=`GET ${$("transportUrlInput").value.trim()||"https://example.com/index.html"}\nHTTP request`; startTransport(); log("Transport Browsing: TCP simulation started"); }
+  else if(btn.dataset.tmode==="mail"){ $("transportData").value=`To: ${$("transportToInput").value}\nSubject: ${$("transportSubjectInput").value}\n${$("transportBodyInput").value}`; startTransport(); log("Transport Mail: TCP simulation started"); }
+  else { $("transportStreamState").textContent=`Playing ${$("transportQuality").value}`; startTransport(); log(`Transport Streaming: ${getStreamingProtocol()} simulation started`); }
+}));
 $("transportVisitBtn").onclick=()=>{
   const url=$("transportUrlInput").value.trim()||"https://www.google.com";
   $("transportData").value=`GET ${url}\nTransport payload`;
   setTransportActivity("browsing");
   startTransport();
   log(`Transport Browsing: TCP visualization started for ${url}`);
-  window.open(url,"_blank","noopener,noreferrer");
 };
 $("transportSendBtn").onclick=()=>{
   $("transportData").value=`To: ${$("transportToInput").value}\nSubject: ${$("transportSubjectInput").value}\n${$("transportBodyInput").value}`;
@@ -231,3 +285,4 @@ transportActivity = "browsing";
 $("transportProtocol").value="TCP";
 window.addEventListener("resize",()=>drawCongestion({protocol:transportActivity==="streaming"?getStreamingProtocol():"TCP",segments:[]}));
 renderApplication();setTransportActivity("browsing");drawCongestion({protocol:"TCP",segments:[]});
+// No automatic page-load session: the user chooses Browsing, Mail, or Streaming, then that activity runs automatically.
